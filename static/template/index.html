@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Focus | To-Do List</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Link to CSS -->
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-dashboard">
+
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+    </div>
+
+    <div class="layout-wrapper">
+        <div class="sidebar">
+            <h2 style="margin-bottom: 2rem; color: #039be5; text-align: center;">Student Focus</h2>
+            <a href="/" class="vertical-nav-link active"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="/assignments" class="vertical-nav-link"><i class="fas fa-tasks"></i> Assignments</a>
+            <a href="/subjects" class="vertical-nav-link"><i class="fas fa-book"></i> Subjects</a>
+            <a href="/marks" class="vertical-nav-link"><i class="fas fa-graduation-cap"></i> Marks</a>
+            <a href="/notes" class="vertical-nav-link"><i class="fas fa-sticky-note"></i> Notes</a>
+            <a href="/rewards" class="vertical-nav-link"><i class="fas fa-star"></i> Rewards</a>
+            <a href="/puzzle" class="vertical-nav-link"><i class="fas fa-puzzle-piece"></i> Brain Break</a>
+            <a href="/logout" class="vertical-nav-link" style="margin-top: auto; background: #ffebee; color: #c62828;"><i class="fas fa-sign-out-alt"></i> Exit</a>
+        </div>
+
+        <div class="main-content">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert-success">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+            <header style="text-align: left; margin-bottom: 2rem;">
+                <button class="menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                <h1>Welcome, {{ session.username }}!</h1>
+                <p>Dashboard & Assignments</p>
+            </header>
+
+        <!-- Progress Section -->
+        <div class="stats-container">
+            <div class="stat-card stat-completed">
+                <i class="fas fa-check-circle stat-icon"></i>
+                <h3>{{ completed_count }}</h3>
+                <span>Completed</span>
+            </div>
+            <div class="stat-card stat-progress">
+                <i class="fas fa-chart-pie stat-icon"></i>
+                <h3>{{ progress }}%</h3>
+                <span>Progress</span>
+            </div>
+            <div class="stat-card stat-overdue">
+                <i class="fas fa-exclamation-triangle stat-icon"></i>
+                <h3>{{ overdue|length }}</h3>
+                <span>Overdue</span>
+            </div>
+            <div class="stat-card stat-score">
+                <i class="fas fa-star stat-icon"></i>
+                <h3>{{ total_score }}</h3>
+                <span>Score</span>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Left Column: Urgent -->
+            <div class="column">
+                {% if overdue %}
+                <h3 class="section-title alert-text"><i class="fas fa-clock"></i> Overdue</h3>
+                <ul class="task-list">
+                    {% for task in overdue %}
+                    <li class="task-item priority-{{ task.priority|default('medium') }}" style="border-left-color: {{ task.color|default('#ccc') }};">
+                        <div class="task-info">
+                            <span class="task-subject" style="background: {{ task.color|default('#ccc') }}">{{ task.subject|default('General') }}</span>
+                            <span class="task-title">{{ task.title }}</span>
+                            <span class="task-date">Due: {{ task.due_date }}</span>
+                        </div>
+                        <div class="task-actions">
+                            <a href="/complete/{{ task._id }}" class="btn-check" title="Complete"><i class="fas fa-check"></i></a>
+                            <a href="/delete/{{ task._id }}" class="btn-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                <h3 class="section-title"><i class="fas fa-calendar-day"></i> Today's Focus</h3>
+                <ul class="task-list">
+                    {% for task in due_today %}
+                    <li class="task-item priority-{{ task.priority|default('medium') }}" style="border-left-color: {{ task.color|default('#ccc') }};">
+                        <div class="task-info">
+                            <span class="task-subject" style="background: {{ task.color|default('#ccc') }}">{{ task.subject|default('General') }}</span>
+                            <span class="task-title">{{ task.title }}</span>
+                            <span class="task-date">Due: {{ task.due_date }}</span>
+                        </div>
+                        <div class="task-actions">
+                            <a href="/complete/{{ task._id }}" class="btn-check"><i class="fas fa-check"></i></a>
+                            <a href="/delete/{{ task._id }}" class="btn-delete"><i class="fas fa-trash"></i></a>
+                        </div>
+                    </li>
+                    {% else %}
+                        <li class="empty-state">Nothing due today! 🎉</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Right Column: Upcoming -->
+            <div class="column">
+                <h3 class="section-title"><i class="fas fa-calendar-alt"></i> Upcoming (7 Days)</h3>
+                <ul class="task-list">
+                    {% for task in upcoming %}
+                    <li class="task-item priority-{{ task.priority|default('medium') }}" style="border-left-color: {{ task.color|default('#ccc') }};">
+                        <div class="task-info">
+                            <span class="task-subject" style="background: {{ task.color|default('#ccc') }}">{{ task.subject|default('General') }}</span>
+                            <span class="task-title">{{ task.title }}</span>
+                            <span class="task-date">Due: {{ task.due_date }}</span>
+                        </div>
+                        <div class="task-actions">
+                            <a href="/complete/{{ task._id }}" class="btn-check"><i class="fas fa-check"></i></a>
+                            <a href="/delete/{{ task._id }}" class="btn-delete"><i class="fas fa-trash"></i></a>
+                        </div>
+                    </li>
+                    {% else %}
+                        <li class="empty-state">Clear schedule ahead.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        }
+        // Swipe Detection
+        let touchstartX = 0;
+        let touchendX = 0;
+        document.addEventListener('touchstart', e => touchstartX = e.changedTouches[0].screenX);
+        document.addEventListener('touchend', e => {
+            touchendX = e.changedTouches[0].screenX;
+            if (touchendX > touchstartX + 50) document.querySelector('.sidebar').classList.add('active');
+            if (touchendX < touchstartX - 50) document.querySelector('.sidebar').classList.remove('active');
+        });
+    </script>
+</body>
+</html>
