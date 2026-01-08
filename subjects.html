@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subjects | Student Focus</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-subjects">
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+    </div>
+
+    <div class="layout-wrapper">
+        <div class="sidebar">
+            <h2 style="margin-bottom: 2rem; color: #039be5; text-align: center;">Student Focus</h2>
+            <a href="/" class="vertical-nav-link"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="/assignments" class="vertical-nav-link"><i class="fas fa-tasks"></i> Assignments</a>
+            <a href="/subjects" class="vertical-nav-link active"><i class="fas fa-book"></i> Subjects</a>
+            <a href="/marks" class="vertical-nav-link"><i class="fas fa-graduation-cap"></i> Marks</a>
+            <a href="/notes" class="vertical-nav-link"><i class="fas fa-sticky-note"></i> Notes</a>
+            <a href="/rewards" class="vertical-nav-link"><i class="fas fa-star"></i> Rewards</a>
+            <a href="/puzzle" class="vertical-nav-link"><i class="fas fa-puzzle-piece"></i> Brain Break</a>
+            <a href="/logout" class="vertical-nav-link" style="margin-top: auto; background: #ffebee; color: #c62828;"><i class="fas fa-sign-out-alt"></i> Exit</a>
+        </div>
+
+        <div class="main-content">
+            <header style="text-align: left; margin-bottom: 2rem;">
+                <h1>Subjects</h1>
+                <p>Manage your courses</p>
+            </header>
+
+        <!-- Add Subject Form -->
+        <form action="/add_subject" method="POST" class="input-group">
+            <div class="row">
+                <input type="text" name="name" placeholder="Subject Name (e.g. History)" required>
+                <input type="color" name="color" value="#667eea" title="Subject Color" style="height: 45px; width: 60px; padding: 0;">
+            </div>
+            <button type="submit" class="add-btn">Add New Subject</button>
+        </form>
+
+        <h3 class="section-title" style="margin-top: 2rem;">Your Courses</h3>
+        
+        <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));">
+            {% for sub in subjects %}
+            <div class="stat-card" style="border-top: 5px solid {{ sub.color }}; text-align: left; position: relative;">
+                <h3 style="font-size: 1.2rem; padding-right: 20px;">{{ sub.name }}</h3>
+                <span style="color: {{ sub.color }}; font-weight: bold;">● Active</span>
+                <a href="/delete_subject/{{ sub._id }}" class="btn-delete" style="position: absolute; top: 15px; right: 15px; text-decoration: none;" onclick="return confirm('Delete this subject?');"><i class="fas fa-trash"></i></a>
+            </div>
+            {% else %}
+            <div class="empty-state" style="grid-column: 1 / -1;">
+                No subjects added yet. Add one above!
+            </div>
+            {% endfor %}
+        </div>
+
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Student Focus</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-login">
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+    </div>
+
+    <div class="container" style="text-align: center;">
+        <header>
+            <h1 style="font-size: 3.5rem; font-weight: 600; margin-bottom: 0.5rem;"><i class="fas fa-book-open"></i> Stay Focus <i class="fas fa-book-open"></i></h1>
+            <p style="font-size: 1.5rem; font-weight: 700; opacity: 0.9;">by To-Do List</p>
+            <p style="margin-top: 1rem;">Please enter your name to continue</p>
+        </header>
+
+        <form action="/login" method="POST" class="input-group" style="max-width: 300px; margin: 0 auto;">
+            <input type="text" name="username" placeholder="Your Name" required autocomplete="off" style="text-align: center; margin-bottom: 15px;">
+            <button type="submit" class="add-btn">Login</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marks & Performance | Student Focus</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-marks">
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+    </div>
+
+    <div class="layout-wrapper">
+        <div class="sidebar">
+            <h2 style="margin-bottom: 2rem; color: #039be5; text-align: center;">Student Focus</h2>
+            <a href="/" class="vertical-nav-link"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="/assignments" class="vertical-nav-link"><i class="fas fa-tasks"></i> Assignments</a>
+            <a href="/subjects" class="vertical-nav-link"><i class="fas fa-book"></i> Subjects</a>
+            <a href="/marks" class="vertical-nav-link active"><i class="fas fa-graduation-cap"></i> Marks</a>
+            <a href="/notes" class="vertical-nav-link"><i class="fas fa-sticky-note"></i> Notes</a>
+            <a href="/rewards" class="vertical-nav-link"><i class="fas fa-star"></i> Rewards</a>
+            <a href="/puzzle" class="vertical-nav-link"><i class="fas fa-puzzle-piece"></i> Brain Break</a>
+            <a href="/logout" class="vertical-nav-link" style="margin-top: auto; background: #ffebee; color: #c62828;"><i class="fas fa-sign-out-alt"></i> Exit</a>
+        </div>
+
+        <div class="main-content">
+            <header style="text-align: left; margin-bottom: 2rem;">
+                <h1>Performance</h1>
+                <p>Track your scores & remarks</p>
+            </header>
+
+        <!-- Add Mark Form -->
+        <form action="/add_mark" method="POST" class="input-group">
+            <div class="row">
+                <select name="subject" required>
+                    <option value="" disabled selected>Subject</option>
+                    {% for sub in subjects %}
+                    <option value="{{ sub._id }}">{{ sub.name }}</option>
+                    {% endfor %}
+                </select>
+                <input type="number" name="score" placeholder="Score" required>
+                <input type="number" name="total" placeholder="Total" required>
+            </div>
+            <input type="text" name="remarks" placeholder="Remarks (e.g. Needs improvement in algebra)" autocomplete="off">
+            <div class="row" style="align-items: center; background: rgba(255,255,255,0.6); padding: 0 10px; border-radius: 10px;">
+                <label style="margin-right: 10px;">Performance Rating:</label>
+                <select name="stars" style="background: transparent;">
+                    <option value="1">⭐ 1 Star</option>
+                    <option value="2">⭐⭐ 2 Stars</option>
+                    <option value="3">⭐⭐⭐ 3 Stars</option>
+                    <option value="4">⭐⭐⭐⭐ 4 Stars</option>
+                    <option value="5" selected>⭐⭐⭐⭐⭐ 5 Stars</option>
+                </select>
+            </div>
+            <button type="submit" class="add-btn">Log Score</button>
+        </form>
+
+        <div class="dashboard-grid">
+            {% for mark in marks %}
+            <div class="stat-card" style="text-align: left; position: relative;">
+                <span class="task-subject" style="background: #667eea;">{{ mark.subject }}</span>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                    <span class="mark-score">{{ mark.score }} <span style="font-size: 0.8rem; color: #666;">/ {{ mark.total }}</span></span>
+                    <div class="star-gold">
+                        {% for i in range(mark.stars) %}<i class="fas fa-star"></i>{% endfor %}
+                    </div>
+                </div>
+                {% if mark.remarks %}
+                <p class="task-desc" style="margin-top: 10px; font-style: italic;">"{{ mark.remarks }}"</p>
+                {% endif %}
+                <a href="/delete_generic/marks/{{ mark._id }}" class="btn-delete" style="position: absolute; top: 15px; right: 15px;" onclick="return confirm('Delete?');"><i class="fas fa-trash"></i></a>
+            </div>
+            {% else %}
+            <div class="empty-state" style="grid-column: 1 / -1;">
+                No marks logged yet.
+            </div>
+            {% endfor %}
+        </div>
+        </div>
+    </div>
+</body>
+</html>

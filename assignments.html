@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignments | Student Focus</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-assignments">
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+    </div>
+
+    <div class="layout-wrapper">
+        <!-- Vertical Sidebar -->
+        <div class="sidebar">
+            <h2 style="margin-bottom: 2rem; color: #039be5; text-align: center;">Student Focus</h2>
+            <a href="/" class="vertical-nav-link"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="/assignments" class="vertical-nav-link active"><i class="fas fa-tasks"></i> Assignments</a>
+            <a href="/subjects" class="vertical-nav-link"><i class="fas fa-book"></i> Subjects</a>
+            <a href="/marks" class="vertical-nav-link"><i class="fas fa-graduation-cap"></i> Marks</a>
+            <a href="/notes" class="vertical-nav-link"><i class="fas fa-sticky-note"></i> Notes</a>
+            <a href="/rewards" class="vertical-nav-link"><i class="fas fa-star"></i> Rewards</a>
+            <a href="/puzzle" class="vertical-nav-link"><i class="fas fa-puzzle-piece"></i> Brain Break</a>
+            <a href="/logout" class="vertical-nav-link" style="margin-top: auto; background: #ffebee; color: #c62828;"><i class="fas fa-sign-out-alt"></i> Exit</a>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <header style="text-align: left; margin-bottom: 1.5rem;">
+                <button class="menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                <h1>Assignments</h1>
+                <p>Manage your workload</p>
+            </header>
+
+            <!-- Detailed Add Form -->
+        <form action="/add" method="POST" class="input-group">
+            <input type="text" name="title" placeholder="Assignment Title" required autocomplete="off">
+            <textarea name="description" placeholder="Details, links, or notes..."></textarea>
+            
+            <div class="row">
+                <select name="subject">
+                    <option value="" disabled selected>Subject</option>
+                    {% for sub in subjects %}
+                    <option value="{{ sub._id }}">{{ sub.name }}</option>
+                    {% endfor %}
+                </select>
+                <select name="priority">
+                    <option value="low">Low Priority</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="high">High Priority</option>
+                </select>
+                <input type="date" name="due_date" class="date-input">
+            </div>
+            <button type="submit" class="add-btn">Add Assignment</button>
+        </form>
+
+        <div class="dashboard-grid">
+            <!-- Pending Tasks -->
+            <div class="column">
+                <h3 class="section-title"><i class="fas fa-hourglass-half"></i> Pending</h3>
+                <ul class="task-list">
+                    {% for task in pending %}
+                    <li class="task-item priority-{{ task.priority|default('medium') }}" style="border-left-color: {{ task.color|default('#ccc') }};">
+                        <div class="task-info">
+                            <span class="task-subject" style="background: {{ task.color|default('#ccc') }}">{{ task.subject|default('General') }}</span>
+                            <span class="task-title">{{ task.title }}</span>
+                            {% if task.description %}
+                                <p class="task-desc">{{ task.description }}</p>
+                            {% endif %}
+                            <span class="task-date">Due: {{ task.due_date }}</span>
+                        </div>
+                        <div class="task-actions">
+                            <a href="/complete/{{ task._id }}" class="btn-check"><i class="fas fa-check"></i></a>
+                            <a href="/delete/{{ task._id }}" class="btn-delete"><i class="fas fa-trash"></i></a>
+                        </div>
+                    </li>
+                    {% else %}
+                        <li class="empty-state">No pending work. Great job!</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Completed Tasks -->
+            <div class="column">
+                <h3 class="section-title"><i class="fas fa-check-double"></i> Completed</h3>
+                <ul class="task-list">
+                    {% for task in completed %}
+                    <li class="task-item completed" style="border-left-color: {{ task.color|default('#ccc') }};">
+                        <div class="task-info">
+                            <span class="task-title">{{ task.title }}</span>
+                            <span class="task-date">Done</span>
+                        </div>
+                        <div class="task-actions">
+                            <a href="/complete/{{ task._id }}" class="btn-check"><i class="fas fa-undo"></i></a>
+                            <a href="/delete/{{ task._id }}" class="btn-delete"><i class="fas fa-trash"></i></a>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        }
+        // Swipe Detection
+        let touchstartX = 0;
+        let touchendX = 0;
+        document.addEventListener('touchstart', e => touchstartX = e.changedTouches[0].screenX);
+        document.addEventListener('touchend', e => {
+            touchendX = e.changedTouches[0].screenX;
+            if (touchendX > touchstartX + 50) document.querySelector('.sidebar').classList.add('active');
+            if (touchendX < touchstartX - 50) document.querySelector('.sidebar').classList.remove('active');
+        });
+    </script>
+</body>
+</html>
